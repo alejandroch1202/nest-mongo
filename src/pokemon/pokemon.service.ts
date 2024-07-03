@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
+import { ConfigService } from '@nestjs/config';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
@@ -13,10 +14,15 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
+  private envAccessExample: string; // Access to env variables from the service
+
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.envAccessExample = this.configService.get<string>('databaseUrl'); // Access to env variables from the service
+  }
 
   async create(createPokemonDto: CreatePokemonDto) {
     createPokemonDto.name = createPokemonDto.name.toLowerCase();
@@ -29,6 +35,7 @@ export class PokemonService {
   }
 
   async findAll(paginationDto: PaginationDto) {
+    console.log(this.envAccessExample); // Access to env variables from the service
     const { limit = 20, offset = 0 } = paginationDto;
     return this.pokemonModel
       .find()
