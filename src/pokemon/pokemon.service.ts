@@ -82,4 +82,9 @@ export class PokemonService {
     console.log(error);
     throw new InternalServerErrorException(`Can't update pokemon - check logs`);
   }
+
+  async populateDatabase(data: CreatePokemonDto[]) {
+    await this.pokemonModel.deleteMany();
+    await this.pokemonModel.insertMany(data);
+  }
 }
